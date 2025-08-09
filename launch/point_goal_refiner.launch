@@ -1,0 +1,39 @@
+<launch>
+  <arg name="x"   default="0.0" />
+  <arg name="y"   default="0.0" />
+  <arg name="yaw" default="0.0" />
+  <arg name="clear_costmaps_before" default="true" />
+
+  <arg name="costmap_topic" default="/move_base/local_costmap/costmap"/>
+  <arg name="wait_after_sec" default="0.5"/>
+  <arg name="trigger_immediately" default="false"/>
+
+  <arg name="image_topic" default="/local_costmap/image"/>
+  <arg name="wait_for_image" default="true"/>
+  <arg name="wait_timeout_sec" default="60.0"/>
+  <arg name="fov_deg" default="120.0"/>
+
+  <node pkg="tiago_nav" type="point_goal_refiner.py" name="point_goal_refiner" output="screen">
+    <param name="x" value="$(arg x)"/>
+    <param name="y" value="$(arg y)"/>
+    <param name="yaw" value="$(arg yaw)"/>
+    <param name="clear_costmaps_before" value="$(arg clear_costmaps_before)"/>
+  </node>
+
+  <node pkg="tiago_nav" type="display_costmap.py" name="display_costmap" output="screen">
+    <param name="costmap_topic" value="$(arg costmap_topic)"/>
+    <param name="wait_after_sec" value="$(arg wait_after_sec)"/>
+    <param name="trigger_immediately" value="$(arg trigger_immediately)"/>
+  </node>
+
+  <node pkg="tiago_nav" type="goal_finding.py" name="goal_finding" output="screen">
+    <param name="image_topic" value="/local_costmap/image"/>
+    <param name="wait_for_image" value="true"/>
+    <param name="wait_timeout_sec" value="60.0"/>
+  </node>
+
+  <node pkg="tiago_nav" type="auto_docking.py" name="auto_docking" output="screen">
+    <param name="target_dist" value="0.60"/>               
+    <param name="frame_id" value="map"/>                  
+  </node>
+</launch>
